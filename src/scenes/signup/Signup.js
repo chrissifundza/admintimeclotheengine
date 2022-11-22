@@ -66,7 +66,7 @@ export default  function Signup() {
                
               }).then((response)=>{
                 console.log("Success")
-                navigate("/signin")
+                navigate("/")
               })
             }
           
