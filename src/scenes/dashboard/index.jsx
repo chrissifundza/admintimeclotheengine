@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
@@ -35,7 +35,8 @@ const Dashboard = () => {
   const [AllShops, setAllShops] = useState([])
   const [AllUsers, setAllusers] = useState([])
   const [AllProducts, setAllProducts] = useState([])
-  
+  const [FilterShop, setFilterShop] = useState('')
+  const [Shop, setShop] = useState([])
 function signout(){
   const auth = getAuth();
     signOut(auth).then(() => {
@@ -60,8 +61,10 @@ useEffect(()=>{
     //const querySnapshot = await getDocs(collection(db, "Shops"));
     Axios.get("https://admintimeclothengine.herokuapp.com/shops").then((response)=>{
      let querySnapshot= response.data
+     console.log(querySnapshot)
      setTotalShops(querySnapshot.length)
      setAllShops(response.data)
+   //  getAllShops()
   })
   
   
@@ -80,13 +83,133 @@ useEffect(()=>{
    console.log(res.data) 
    setTotalProducts(res.data.length)
    setAllProducts(res.data)
+   
   })
 },[]) 
 
+useEffect(()=>{
+  getAllShops()
+},[])
+/*
+let shops = AllShops.filter((shop)=>shop.ShopName.toLowerCase().includes(FilterShop.toLowerCase()))
+  console.log(shops)
+ */
+  let New=[]
+ function getAllShops() {
+  //const querySnapshot = await getDocs(collection(db, "Shops"));
+    
+  Axios.get("https://timelyclotheengine.herokuapp.com/shops").then((response)=>{
+    
+    let querySnapshot= response.data
+  
+
+
+
+  let allShops =  ()=>{
+    querySnapshot.forEach((doc) => {
+      let shopTemplate={name:doc.ShopName,Address:doc.Address,
+        Cover:doc.CoverPhoto,Icon:doc.Icon, ShortAddress:doc.ShortAddress,
+        Discription:doc.ShortDiscription, Brand:doc.Brand }
+  
+      New.push(shopTemplate)
+    });
+   //  console.log(New)
+     getData(New)
+  }
+  allShops();
+ //getData(allShops)
+
+  })
+}
+  // get data
+  
+  async function getData(shopTemplate){
+    
+   //console.log(shopTemplate);
+
+    for (let i = 0; i <shopTemplate.length; i++) {
+        const element = shopTemplate[i].Address;
+        
+        
+        let distance = await calculateRoute(element);
+        let s1=distance.split(" ");
+        let element1='';
+        if (s1.length==4) {
+          element1=(parseInt(s1[0])*60)+parseInt(s1[2]); 
+        } else if(s1.length==2){
+          element1=(parseInt(s1[0])); 
+        }
+     
+        let NewOBject ={ShopName:shopTemplate[i].name,ShopDstance:element1,ShopCover: shopTemplate[i].Cover, Icon:shopTemplate[i].Icon,ShortAddress:shopTemplate[i].ShortAddress, Discription:shopTemplate[i].Discription, Brand:shopTemplate[i].Brand}
+        
+
+        ReadytoOutput(NewOBject)
+    }
+  
+
+  }
+  let Ready1=[]
+  function  ReadytoOutput(shop){
+    Ready1.push(shop)
+   let sorted= Ready1.sort(function(a, b){
+     
+     
+  
+      return (a.ShopDstance - b.ShopDstance)
+    
+    });
+    console.log(sorted)
+    setShop(sorted)
+   }
+
+async function calculateRoute(dist) {
+  
+  let cont =0;
+  /* eslint-disable no-undef */
+  if (cont==0){
+    const directionsService = new google.maps.DirectionsService();
+    const results = await directionsService.route({
+      origin: "Pretoria",
+      destination: dist,
+      /* eslint-disable no-undef */
+      travelMode: google.maps.TravelMode.DRIVING,
+    });
+   /* setDirectionsResponse(results);
+    setDistance(results.routes[0].legs[0].distance.text);
+    setDuration(results.routes[0].legs[0].duration.text);
+    */
+    return  results.routes[0].legs[0].duration.text;
+    cont++
+  }
+  
+  
+}
+let Closer=[]
+function CLN(){
+  //console.log("Running")
+  const getTo = ()=>{
+    for (let i = 0; i < 5; i++) {
+      const element = Shop[i];
+      Closer.push(Shop[i])
+    }
+    return Closer
+}
+let C=getTo();
+console.log(C)
+  Axios.post('http://localhost:3001/create-pdf', C)
+  .then(()=> Axios.get('http://localhost:3001/fetch-pdf', { responseType: 'blob' }))
+  .then((res) => {
+    const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
+
+    saveAs(pdfBlob, 'AllShopsReport.pdf');
+  })
+}
 function generatePdf(){
   
-  Axios.post('https://admintimeclothengine.herokuapp.com/create-pdf', AllShops)
-  .then(() => Axios.get('https://admintimeclothengine.herokuapp.com/fetch-pdf', { responseType: 'blob' }))
+  // AllShops.filter((shop)=>shop.ShopName.toLowerCase().includes(sho.toLowerCase()))
+  
+  Axios.post('http://localhost:3001/create-pdf', AllShops)
+  .then(()=> Axios.get('http://localhost:3001/fetch-pdf', { responseType: 'blob' }))
   .then((res) => {
     const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
 
@@ -94,8 +217,8 @@ function generatePdf(){
   })
 }
 function getAllUsers(){
-  Axios.post('https://admintimeclothengine.herokuapp.com/user-pdf', AllUsers)
-  .then(() => Axios.get('https://admintimeclothengine.herokuapp.com/user-pdf', { responseType: 'blob' }))
+  Axios.post('http://localhost:3001/user-pdf', AllUsers)
+  .then(() => Axios.get('http://localhost:3001/user-pdf', { responseType: 'blob' }))
   .then((res) => {
     const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
 
@@ -103,8 +226,8 @@ function getAllUsers(){
   })
 }
 function getAllProducts(){
-  Axios.post('https://admintimeclothengine.herokuapp.com/product-pdf', AllProducts)
-  .then(() => Axios.get('https://admintimeclothengine.herokuapp.com/product-pdf', { responseType: 'blob' }))
+  Axios.post('http://localhost:3001/product-pdf', AllProducts)
+  .then(() => Axios.get('http://localhost:3001/product-pdf', { responseType: 'blob' }))
   .then((res) => {
     const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
 
@@ -113,8 +236,30 @@ function getAllProducts(){
 }
 
 function getAllOrders(){
-  Axios.post('https://admintimeclothengine.herokuapp.com/order-pdf', Orders)
-  .then(() => Axios.get('https://admintimeclothengine.herokuapp.com/order-pdf', { responseType: 'blob' }))
+  
+var mf = 1;
+var m = 0;
+var item;
+for (var i=0; i<Orders.length; i++)
+{
+        for (var j=i; j<Orders.length; j++)
+        {
+                if (Orders[i].Products == Orders[j].Products)
+                 m++;
+                if (mf<m)
+                {
+                  mf=m; 
+                  item = Orders[i].Products;
+                }
+        }
+        m=0;
+}
+
+
+console.log(item+" ( " +mf +" times ) ") 
+let popularproduct = item+" ( " +mf +" times purchases) "
+  Axios.post('http://localhost:3001/order-pdf', {AllOrders:Orders,PopularPro:popularproduct} )
+  .then(() => Axios.get('http://localhost:3001/order-pdf', { responseType: 'blob' }))
   .then((res) => {
     const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
 
@@ -261,7 +406,9 @@ let count =0
              
             </Box>
             <Box>
-              <IconButton onClick={generatePdf}>
+
+              <IconButton onClick={CLN}>
+                Closer to you Download 
                 <DownloadOutlinedIcon
                   sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
                 />

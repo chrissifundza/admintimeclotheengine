@@ -88,7 +88,7 @@ export default  function Signup() {
     }
     else{
        
-        swal('Error',"Password does not match",'error')
+      //  swal('Error',"Password does not match",'error')
     }
    
   };

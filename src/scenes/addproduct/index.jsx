@@ -192,7 +192,7 @@ const AddProduct = () => {
                     <MenuItem value="Leather">Leather</MenuItem>
                     <MenuItem value="Wool">Wool</MenuItem>
                     </Select>
-                </FormControl>
+                </FormControl>          
                 <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
                     <InputLabel id="demo-simple-select-filled-label">Product Image</InputLabel>
                         <input

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -15,13 +15,25 @@ const UpdateOrder =() => {
     const user = location.state
     console.log(user);
     const [Status, setStatus] = useState(location.state.row.Status);
-    
+    const [Drivers, setDrivers] = useState([])
+    const [AssignedDriver, setAssignedDriver] = useState('')
   const handleFormSubmit = (values) => {
     console.log(values);
   };
+  useEffect(()=>{
+    axios.get("https://admintimeclothengine.herokuapp.com/driver").then((res)=>{
+     console.log(res.data) 
+     setDrivers(res.data)
+     
+    })
+  },[]) 
+  let SelectD = Drivers.filter((driver)=>driver.DriverName==AssignedDriver)
+ 
 function Update(){
+  console.log(SelectD);
+
   setLoading(true)
-axios.put('https://admintimeclothengine.herokuapp.com/orderupdate',{Status:Status,id:location.state.row.idorders}).then((response)=>{
+axios.put('https://admintimeclothengine.herokuapp.com/orderupdate',{Status:Status,DriverName:SelectD[0].DriverName,DriverCell:SelectD[0].Cellphone,id:location.state.row.idorders}).then((response)=>{
   setLoading(false)  
 swal("Success","Order updated successfully","success")
 })
@@ -71,6 +83,30 @@ swal("Success","Order updated successfully","success")
                     <MenuItem value="Ordered">Ordered</MenuItem>
                     <MenuItem value="Shipped">Shipped</MenuItem>
                     <MenuItem value="Delivered">Delivered</MenuItem>
+                    
+                    </Select>
+                </FormControl>
+
+                <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel id="demo-simple-select-filled-label">Assign Driver</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-filled-label"
+                    id="demo-simple-select-filled"
+                    value={AssignedDriver}
+                    onChange={(event)=>{setAssignedDriver(event.target.value)}}
+                    >
+                    <MenuItem value="">
+                        <em>None</em>
+                    </MenuItem>
+                    {Drivers.map((driver)=>{
+
+                      return(
+                        <MenuItem key={driver.iddriver} value={driver.DriverName}>{driver.DriverName}</MenuItem>
+
+                      )
+                    })}
+                    
+                   
                     
                     </Select>
                 </FormControl>

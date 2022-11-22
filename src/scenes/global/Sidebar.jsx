@@ -19,6 +19,16 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { auth } from "../../firebase";
+import { useUIContext } from "../../context/ui";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  
+} from "firebase/storage";
+import swal from 'sweetalert';
+import Axios from 'axios';
+import { storage } from '../../firebase';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -44,6 +54,47 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
   const [User, setUser] = useState('');
+  const [imageUpload, setImageUpload] = useState(null);
+  const [selectedImage, setselectedImage] = useState('');
+  const {Photo, LoggedID } = useUIContext();
+   function Update(){
+     
+     const imageRef = ref(storage, `Profiles/${imageUpload.name }`);
+   
+   uploadBytes(imageRef, imageUpload).then((snapshot1) => {
+     getDownloadURL(snapshot1.ref).then( async (url1) =>  {
+       Axios.put('https://admintimeclothengine.herokuapp.com/adminphoto',{UserPhoto:url1,id:LoggedID}).then((response)=>{
+        
+       swal('Success','Updated successfully','success')
+ 
+       })
+       
+     })
+   })
+    
+     }
+ 
+     const previewImage = () => {
+       console.log("running")
+       var input = document.createElement("input");
+       input.type = "file";
+       input.onchange = (event) => {
+         const imageFiles = event.target.files;
+         setImageUpload(event.target.files[0])
+         const imageFilesLength = imageFiles.length;
+     
+         if (imageFilesLength > 0) {
+             const imageSrc = URL.createObjectURL(imageFiles[0]);
+            // const imagePreviewElement = document.querySelector("#preview-selected-image");
+            // imagePreviewElement.src = imageSrc;
+            setselectedImage(imageSrc)
+            // imagePreviewElement.style.display = "block";
+            Update()
+         }
+       };
+       input.click();
+      
+   };
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
 
@@ -120,8 +171,10 @@ const Sidebar = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src="https://t4.ftcdn.net/jpg/00/65/77/27/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg"
+                 // src="https://t4.ftcdn.net/jpg/00/65/77/27/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg"
                   style={{ cursor: "pointer", borderRadius: "50%" }}
+                  onClick={previewImage}
+                  src= {selectedImage !==''?selectedImage:Photo}
                 />
               </Box>
               <Box textAlign="center">

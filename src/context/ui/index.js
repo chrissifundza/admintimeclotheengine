@@ -8,7 +8,7 @@ export const useUIContext = () => useContext(UIContext);
 export const UIProvider = ({ children }) => {
   const [CurrentUserEmail, setCurrentUserEmail] = useState('')
   const [LoggedID, setLoggedID] = useState(0)
-    
+  const [Photo, setPhoto] = useState("https://t4.ftcdn.net/jpg/00/65/77/27/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg")
    
       //Reset password
         
@@ -36,17 +36,19 @@ export const UIProvider = ({ children }) => {
        
           
         async function getUse(user){
-         let response= await Axios.get("http://localhost:3001/admin/"+user)
+         let response= await Axios.get("https://admintimeclothengine.herokuapp.com/admin/"+user)
             console.log(response.data)
             setLoggedID(response.data[0].idadmin)
-          
+            setPhoto(response.data[0].UserPhoto)
          return response.data
          }
+        
         
           
     const value = {
       CurrentUserEmail,
-      LoggedID
+      LoggedID,
+      Photo, setPhoto
     };
 
     return <UIContext.Provider value={value}>{children}</UIContext.Provider>

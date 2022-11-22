@@ -53,7 +53,14 @@ const ViewProduct = () => {
 }
   const handleFormSubmit = (values) => {
     
-      console.log("Clicked")
+      console.log("Clicked") /*
+      
+       "@nivo/bar": "^0.80.0",
+    "@nivo/core": "^0.79.0",
+    "@nivo/geo": "^0.80.0",
+    "@nivo/line": "^0.79.1",
+    "@nivo/pie": "^0.80.0",
+      */ 
    
   };
 
@@ -176,8 +183,7 @@ const ViewProduct = () => {
                 onChange={(e)=>setProductName(e.target.value)}
                 value={ProductName}
                 name="ProductName"
-                error={!!touched.ProductName && !!errors.ProductName}
-                helperText={touched.ProductName&& errors.ProductName}
+               
                 sx={{ gridColumn: "span 2" }}
               />
                 <TextField
@@ -189,8 +195,7 @@ const ViewProduct = () => {
                 onChange={(e)=>setProductPrice(e.target.value)}
                 value={ProductPrice}
                 name="ProductPrice"
-                error={!!touched.ProductPrice && !!errors.ProductPrice}
-                helperText={touched.ProductPrice && errors.ProductPrice}
+               
                 sx={{ gridColumn: "span 2" }}
               />
                <TextField
@@ -204,8 +209,7 @@ const ViewProduct = () => {
                 
                 name="ProductDiscription"
                 rows={2}
-                error={!!touched.ProductDiscription && !!errors.ProductDiscription}
-                helperText={touched.ProductDiscription && errors.ProductDiscription}
+               
                 sx={{ gridColumn: "span 2" }}
               />
              

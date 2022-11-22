@@ -37,7 +37,7 @@ const AllProducts = () => {
       };
       
       useEffect(()=>{
-        Axios.get("http://localhost:3001/products").then((res)=>{
+        Axios.get("https://admintimeclothengine.herokuapp.com/products").then((res)=>{
          console.log(res.data) 
         setRows(res.data)
           

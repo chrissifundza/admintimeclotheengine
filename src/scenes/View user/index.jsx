@@ -63,8 +63,7 @@ axios.put('https://admintimeclothengine.herokuapp.com/update',{Name:Name,LastNam
                 onChange={(e)=>setName(e.target.value)}
                 value={Name}
                 name="firstName"
-                error={!!touched.firstName && !!errors.firstName}
-                helperText={touched.firstName && errors.firstName}
+               
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -76,8 +75,7 @@ axios.put('https://admintimeclothengine.herokuapp.com/update',{Name:Name,LastNam
                 onChange={(e)=>setLastName(e.target.value)}
                 value={LastName}
                 name="lastName"
-                error={!!touched.lastName && !!errors.lastName}
-                helperText={touched.lastName && errors.lastName}
+               
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -90,8 +88,7 @@ axios.put('https://admintimeclothengine.herokuapp.com/update',{Name:Name,LastNam
                 value={Email}
                 disabled
                 name="email"
-                error={!!touched.email && !!errors.email}
-                helperText={touched.email && errors.email}
+               
                 sx={{ gridColumn: "span 4" }}
               />
          
