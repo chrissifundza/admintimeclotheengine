@@ -40,7 +40,7 @@ OrderDetailUpdate()
 })
 
 }
-function OrderDetailUpdate(){
+export default function OrderDetailUpdate(){
   axios.put('https://admintimeclothengine.herokuapp.com/orderdetailupdate',{idorders:user.row.idorders,iddriver:SelectD[0].iddriver}).then((response)=>{
   setLoading(false)  
 swal("Success","Order updated successfully","success")
@@ -146,4 +146,4 @@ const initialValues = {
   
 };
 
-export default UpdateOrder;
+//export default UpdateOrder;
