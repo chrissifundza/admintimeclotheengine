@@ -35,10 +35,16 @@ function Update(){
   setLoading(true)
 axios.put('https://admintimeclothengine.herokuapp.com/orderupdate',{Status:Status,DriverName:SelectD[0].DriverName,DriverCell:SelectD[0].Cellphone,id:location.state.row.idorders}).then((response)=>{
   setLoading(false)  
-swal("Success","Order updated successfully","success")
+//swal("Success","Order updated successfully","success")
+OrderDetailUpdate()
 })
 
 }
+function OrderDetailUpdate(){
+  axios.put('https://admintimeclothengine.herokuapp.com/orderdetailupdate',{idorders:user.row.idorders,iddriver:SelectD[0].iddriver}).then((response)=>{
+  setLoading(false)  
+swal("Success","Order updated successfully","success")
+})
   return (
     <Box m="20px">
       <Header title="UPDATE ORDER" subtitle="Change Status Order" />
